@@ -2,8 +2,9 @@ import { compose } from 'recompose';
 import { withAuthorization, AuthUserContext } from './Session';
 import React, { useCallback, useEffect, useState } from 'react';
 import TransactionsTable from './TransactionsTable.js'
-// import currentUser, {guestUserAlias} from './User.js'
-import { styles} from '../styles';
+import * as ROUTES from '../constants/routes';
+
+import {styles} from '../styles';
 
 
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -54,7 +55,7 @@ const Home = (props) => {
         if (collection == undefined || collection.docs.length == 0){
             const params = new URLSearchParams()
             params.append('access_token', accessToken)
-            axios.post('https://us-central1-runway-manager.cloudfunctions.net/app/api/accounts', params).then(res => {
+            axios.post(ROUTES.BACKEND + '/api/accounts', params).then(res => {
             for (const account of res.data.accounts){
                 props.firebase.setPlaidAccount(props.firebase.auth.currentUser.email, account)
             }
@@ -70,13 +71,25 @@ const Home = (props) => {
         }
     }
 
-    const selectUserAccount = (account_id) => (e) => {
-        const params = new URLSearchParams()
-        params.append('account_id', account_id)
-        params.append('access_token', accessToken)
-        axios.post('https://us-central1-runway-manager.cloudfunctions.net/app/api/transactions', params). then(res => {
-            setTransactions(res.data.transactions)
-        })
+    const selectUserAccount = (accountId) => async (e) => {
+        const transactionCollection = await props.firebase.getPlaidTransactions(props.firebase.auth.currentUser.email, accountId)
+        if (transactionCollection == undefined || transactionCollection.docs.length == 0){
+            const params = new URLSearchParams()
+            params.append('account_id', accountId)
+            params.append('access_token', accessToken)
+            axios.post(ROUTES.BACKEND + '/api/transactions', params). then(res => {
+                props.firebase.setPlaidTransactions(props.firebase.auth.currentUser.email, accountId, res.data.transactions)
+                setTransactions(res.data.transactions)
+            })
+        }
+        else{
+            let transactions = []
+            for (const transaction of transactionCollection.docs){
+                transactions.push(transaction.data())
+            }
+        
+            setTransactions(transactions)
+        }
     }
     return(
         <div>
@@ -120,7 +133,8 @@ const Home = (props) => {
             }
             {
                 !isEqual(transactions, []) && (
-                <TransactionsTable transactions={transactions}/>
+
+                    <TransactionsTable transactions={transactions}/>
                 )
             }
         </div>

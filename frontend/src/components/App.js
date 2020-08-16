@@ -4,7 +4,8 @@ import Navigation from './Navigation';
 import SignUp from './SignUp'
 import SignIn from './SignIn'
 import Home from './Home'
-import Landing from './Landing'
+import Landing from './LandingPage'
+import Graph from './Graph'
 
 import * as ROUTES from '../constants/routes';
 import { withFirebase } from './Firebase';
@@ -28,10 +29,11 @@ const App = (props) => {
         <AuthUserContext.Provider value={authUser}>
             <BrowserRouter>
                 <Navigation/>
-                <Route exact path={ROUTES.LANDING}/>
+                <Route exact path={ROUTES.LANDING} component={Landing}/>
                 <Route path={ROUTES.SIGN_UP} component={SignUp} />
                 <Route path={ROUTES.SIGN_IN} component={SignIn} />
                 <Route path={ROUTES.HOME} component={Home} />
+                <Route path={ROUTES.GRAPH} component={Graph} />
             </BrowserRouter>
         </AuthUserContext.Provider>
     )

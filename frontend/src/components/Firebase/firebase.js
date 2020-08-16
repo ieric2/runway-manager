@@ -60,6 +60,21 @@ class Firebase {
     setPlaidAccount = (userId, account) => {
         this.db.collection('plaid').doc(userId).collection('accounts').doc(account.account_id).set(account)
     }
+    getPlaidTransactions = (userId, accountId) =>
+        this.db.collection('plaid').doc(userId).collection('accounts').doc(accountId).collection('transactions').orderBy('date', 'desc').get()
+
+    setPlaidTransactions = (userId, accountId, transactions) => {
+        const batch = this.db.batch()
+        for (const transaction of transactions){
+            const docRef = this.db.collection('plaid').doc(userId).collection('accounts').doc(accountId).collection('transactions').doc(transaction.transaction_id)
+            batch.set(docRef, transaction)
+
+        }
+        batch.commit()
+    }
+
+    getAccount = (userId, accountId) => 
+        this.db.collection('plaid').doc(userId).collection('accounts').doc(accountId).get();
 
 
 

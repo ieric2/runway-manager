@@ -37,6 +37,9 @@ const Navigation = () => {
                     <Button href={ROUTES.HOME} color='inherit'>
                         Home
                     </Button>
+                    <Button href={ROUTES.GRAPH} color='inherit'>
+                        Graphs
+                    </Button>
                     <Button href={ROUTES.SIGN_IN} color='inherit'>
                         Sign In
                     </Button>

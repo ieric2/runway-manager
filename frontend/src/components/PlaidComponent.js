@@ -11,6 +11,8 @@ import axios from 'axios';
 import { styles} from '../styles';
 
 import { withFirebase } from './Firebase';
+import * as ROUTES from '../constants/routes';
+
 
 
 const PlaidComponent = (props) => {
@@ -36,7 +38,7 @@ const PlaidComponent = (props) => {
                     params.append('client_user_id', props.user.email)
                     axios({
                         method: 'post',
-                        url:'https://us-central1-runway-manager.cloudfunctions.net/app/api/create_link_token',
+                        url: ROUTES.BACKEND + '/api/create_link_token',
                         data: params
                     }).then(res => {
                         setLinkToken(res.data.link_token)
@@ -54,7 +56,7 @@ const PlaidComponent = (props) => {
         params.append('public_token', token)
         axios({
             method: 'post',
-            url: 'https://us-central1-runway-manager.cloudfunctions.net/app/api/set_access_token',
+            url: ROUTES.BACKEND + '/api/set_access_token',
             data: params
         }).then(res => {
             if (!error){

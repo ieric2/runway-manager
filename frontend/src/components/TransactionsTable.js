@@ -8,8 +8,6 @@ import TableCell from '@material-ui/core/TableCell'
 
 const TransactionsTable = ({transactions}) => {
 
-    // console.log(transactions)
-
     return (
         <Table>
             <TableHead>
@@ -18,6 +16,9 @@ const TransactionsTable = ({transactions}) => {
                     <TableCell align='right'>Amount</TableCell>
                     <TableCell align='right'>Merchant</TableCell>
                     <TableCell align='right'>Date</TableCell>
+                    <TableCell align='right'>Category</TableCell>
+                    <TableCell align='right'>SubCategory</TableCell>
+                    <TableCell align='right'>SubCategory2</TableCell>
                 </TableRow>
             </TableHead>
                 {transactions.map((transaction) => (
@@ -26,6 +27,15 @@ const TransactionsTable = ({transactions}) => {
                         <TableCell align='right'>{transaction.amount}</TableCell>
                         <TableCell align='right'>{transaction.merchant_name}</TableCell>
                         <TableCell align='right'>{transaction.date}</TableCell>
+                        {transaction.category.length >= 1 &&
+                            <TableCell align='right'>{transaction.category[0]}</TableCell>
+                        }
+                        {transaction.category.length >= 2 &&
+                            <TableCell align='right'>{transaction.category[1]}</TableCell>
+                        }
+                        {transaction.category.length >= 3 &&
+                            <TableCell align='right'>{transaction.category[2]}</TableCell>
+                        }
                     </TableRow>
                 ))}
             <TableBody>
