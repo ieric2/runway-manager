@@ -12,6 +12,8 @@ import {AuthUserContext} from './Session'
  
 import * as ROUTES from '../constants/routes';
 import SignOut from './SignOut'
+import SignIn from './SignIn'
+
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -40,12 +42,12 @@ const Navigation = () => {
                     <Button href={ROUTES.GRAPH} color='inherit'>
                         Graphs
                     </Button>
-                    <Button href={ROUTES.SIGN_IN} color='inherit'>
-                        Sign In
-                    </Button>
                     <AuthUserContext.Consumer>
                         {authUser =>
-                            authUser ? <SignOut/> : null
+                            authUser    ?   <SignOut/> 
+                                        :   <Button href={ROUTES.SIGN_IN} color='inherit'>
+                                                Sign In
+                                            </Button>
                         }
                     </AuthUserContext.Consumer>
                 </ToolBar>

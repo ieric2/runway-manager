@@ -1,6 +1,6 @@
 import { compose } from 'recompose';
 import { withAuthorization, AuthUserContext } from './Session';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useContext } from 'react';
 import TransactionsTable from './TransactionsTable.js'
 import * as ROUTES from '../constants/routes';
 
@@ -30,10 +30,12 @@ const Home = (props) => {
     const [itemId, setItemId] = useState(undefined)
     const [userAccounts, setUserAccounts] = useState(null)
     const [transactions, setTransactions] = useState([])
+    const currentUser = useContext(AuthUserContext)
+
 
     useEffect(() => {
         props.firebase
-            .getPlaidFirebaseDoc(props.firebase.auth.currentUser.email)
+            .getPlaidFirebaseDoc(currentUser.email)
             .then(doc => {
                 const data = doc.data()
                 if (data !== undefined && 'accessToken' in data){
@@ -50,14 +52,14 @@ const Home = (props) => {
 
     const getUserAccounts = async () => {
         const collection = await props.firebase
-            .getPlaidAccounts(props.firebase.auth.currentUser.email)
+            .getPlaidAccounts(currentUser.email)
 
         if (collection == undefined || collection.docs.length == 0){
             const params = new URLSearchParams()
             params.append('access_token', accessToken)
             axios.post(ROUTES.BACKEND + '/api/accounts', params).then(res => {
             for (const account of res.data.accounts){
-                props.firebase.setPlaidAccount(props.firebase.auth.currentUser.email, account)
+                props.firebase.setPlaidAccount(currentUser.email, account)
             }
             setUserAccounts(res.data.accounts)
             })    
@@ -72,13 +74,13 @@ const Home = (props) => {
     }
 
     const selectUserAccount = (accountId) => async (e) => {
-        const transactionCollection = await props.firebase.getPlaidTransactions(props.firebase.auth.currentUser.email, accountId)
+        const transactionCollection = await props.firebase.getPlaidTransactions(currentUser.email, accountId)
         if (transactionCollection == undefined || transactionCollection.docs.length == 0){
             const params = new URLSearchParams()
             params.append('account_id', accountId)
             params.append('access_token', accessToken)
             axios.post(ROUTES.BACKEND + '/api/transactions', params). then(res => {
-                props.firebase.setPlaidTransactions(props.firebase.auth.currentUser.email, accountId, res.data.transactions)
+                props.firebase.setPlaidTransactions(currentUser.email, accountId, res.data.transactions)
                 setTransactions(res.data.transactions)
             })
         }

@@ -9,35 +9,19 @@ import Graph from './Graph'
 
 import * as ROUTES from '../constants/routes';
 import { withFirebase } from './Firebase';
-import {AuthUserContext} from './Session'
+import {AuthUserContext, withAuthorization, withAuthentication} from './Session'
 
 
  
-const App = (props) => {
-    const [authUser, setAuthUser] = useState(null)
-
-    useEffect(() => {
-        const listener = props.firebase.auth.onAuthStateChanged(user => {
-            setAuthUser(user)
-        })
-        return () => {
-            listener();
-        }
-    }, [])
-
-    return(
-        <AuthUserContext.Provider value={authUser}>
-            <BrowserRouter>
-                <Navigation/>
-                <Route exact path={ROUTES.LANDING} component={Landing}/>
-                <Route path={ROUTES.SIGN_UP} component={SignUp} />
-                <Route path={ROUTES.SIGN_IN} component={SignIn} />
-                <Route path={ROUTES.HOME} component={Home} />
-                <Route path={ROUTES.GRAPH} component={Graph} />
-            </BrowserRouter>
-        </AuthUserContext.Provider>
-    )
-
-};
+const App = (props) => (
+    <BrowserRouter>
+        <Navigation/>
+        <Route exact path={ROUTES.LANDING} component={Landing}/>
+        <Route path={ROUTES.SIGN_UP} component={SignUp} />
+        <Route path={ROUTES.SIGN_IN} component={SignIn} />
+        <Route path={ROUTES.HOME} component={Home} />
+        <Route path={ROUTES.GRAPH} component={Graph} />
+    </BrowserRouter>
+);
  
-export default withFirebase(App);
+export default withAuthentication(App);
